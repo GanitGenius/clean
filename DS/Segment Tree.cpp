@@ -1,86 +1,89 @@
 {
-struct segtree{
 
-	int s[N*4], lzy[N*4];
-	int *a;
-	void build(int id = 1,int l = 0,int r = n-1){
-		if(r == l){	//	l + 1 == r
-			s[id] = a[l];
-			return ;
+
+struct SegmentTree {
+	int sarr[N * 4], lzy[N * 4];
+	int *arr;
+
+	SegmentTree(int *a, int l = 0, int r = n - 1) { this->arr = a;	this->build(1, l, r); }
+	
+	void build(int id = 1, int l = 0, int r = n - 1) {
+		if (r == l) {	//	l + 1 == r
+			sarr[id] = arr[l];
+			return;
 		}
-		int mid = (l+r)>>1;
+		int mid = (l + r) >> 1;
 		build(id * 2, l, mid);
 		build(id * 2 + 1, mid + 1, r);
-		s[id] = s[id * 2] + s[id * 2 + 1];
+		sarr[id] = sarr[id * 2] + sarr[id * 2 + 1];
 	}
-	void build(int *A,int l=0,int r=n-1){	a=A;	build(1,l,r);	}
-	void upd(int p,int x,int id = 1,int l = 0,int r = n-1){
-		if(r == l){	//	l = r - 1 = p
-			a[p] += x;
-			return ;
+
+	void upd(int p, int x, int id = 1, int l = 0, int r = n - 1) {
+		if (r == l) {	//	l = r - 1 = p
+			arr[p] += x;
+			return;
 		}
-		int mid = (l + r)>>1;
-		if(p <= mid)
+		int mid = (l + r) >> 1;
+		if (p <= mid)
 			upd(p, x, id * 2, l, mid);
 		else
-			upd(p, x, id * 2 + 1, mid+1, r);
+			upd(p, x, id * 2 + 1, mid + 1, r);
+		sarr[id] = sarr[id * 2] + sarr[id * 2 + 1];
 	}
-	int get(int x,int y,int id = 1,int l = 0,int r = n-1){
-		if(x > r or l > y)	return 0;
-		if(x <= l && r <= y)	return s[id];
-		int mid = (l+r)>>1; 
-		return get(x, y, id * 2, l, mid) +
-		       get(x, y, id * 2 + 1, mid+1, r);
-	}
-	void updRange(int st, int end, int x, int id = 1, int l = 0, int r = n-1){
-		
-		if(lzy[id]!=0){
-			s[id]+=(r-l+1)*lzy[id];
-			if(l!=r){
-				lzy[2*id]+=lzy[id];
-				lzy[2*id+1]+=lzy[id];
-			}
-			lzy[id]=0;			
-		}
-		if(r<st || l>end)return;
 
-		if(l>=st && r<=end){
-			s[id] += (r - l + 1) * x;
-			if(l!=r){
-				lzy[2*id] += x;
-				lzy[2*id+1] += x;
+	int get(int st, int en, int id = 1, int l = 0, int r = n - 1) {
+		if (st > r || en < l)	return 0;
+		if (st <= l && en >= r)	return sarr[id];
+		int mid = (l + r) >> 1;
+		return get(st, en, id * 2, l, mid) +
+			get(st, en, id * 2 + 1, mid + 1, r);
+	}
+
+	void updRange(int st, int en, int x, int id = 1, int l = 0, int r = n - 1) {
+		if (lzy[id] != 0) {
+			sarr[id] += (r - l + 1) * lzy[id];
+			if (l != r) {
+				lzy[2 * id] += lzy[id];
+				lzy[2 * id + 1] += lzy[id];
+			}
+			lzy[id] = 0;
+		}
+		if (st > r || en < l)	return;
+		if (st <= l && en >= r) {
+			sarr[id] += (r - l + 1) * x;
+			if (l != r) {
+				lzy[2 * id] += x;
+				lzy[2 * id + 1] += x;
 			}
 			return;
 		}
-		int mid=(l+r)>>1;
-		updRange(st, end, x, 2*id, l, mid);
-		updRange(st, end, x, 2*id + 1, mid + 1, r);
-		s[id]=s[2*id] + s[2*id + 1];
-
+		int mid = (l + r) >> 1;
+		updRange(st, en, x, 2 * id, l, mid);
+		updRange(st, en, x, 2 * id + 1, mid + 1, r);
+		sarr[id] = sarr[2 * id] + sarr[2 * id + 1];
 	}
-	int getRange(int x,int y,int id = 1,int l = 0,int r = n-1){
-		if(x > r or l > y)	return 0;
-		if(lzy[id]!=0){
-			s[id]+=(r-l+1)*lzy[id];
-			if(l!=r){
-				lzy[2*id] += lzy[id];
-				lzy[2*id+1] += lzy[id];
+
+	int getRange(int st, int en, int id = 1, int l = 0, int r = n - 1) {
+		if (st > r || en < l)	return 0;
+		if (lzy[id] != 0) {
+			sarr[id] += (r - l + 1) * lzy[id];
+			if (l != r) {
+				lzy[2 * id] += lzy[id];
+				lzy[2 * id + 1] += lzy[id];
 			}
-			lzy[id]=0;			
+			lzy[id] = 0;
 		}
-		if(x <= l && r <= y)	return s[id];
-		int mid = (l+r)>>1; 
-		return get(x, y, id * 2, l, mid) +
-		       get(x, y, id * 2 + 1, mid+1, r);
+		if (st <= l && en >= r)	return sarr[id];
+		int mid = (l + r) >> 1;
+		return get(st, en, id * 2, l, mid) +
+			get(st, en, id * 2 + 1, mid + 1, r);
 	}
 
-} st;
-
+} sgt;
 
 
 }
 {
-
 
 
 struct node_ap
@@ -192,7 +195,6 @@ struct segment_tree_ap
 		return merge(query(qL, qR, l, mid, 2 * idx + 1), query(qL, qR, mid + 1, r, 2 * idx + 2));
 	}                 
 };
-
 
 
 }
