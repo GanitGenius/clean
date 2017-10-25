@@ -1,5 +1,5 @@
 // 
-void primeGen(){
+void sieve(){
 	const int lim = 1e6 + 6;
 	int factor[lim];	factor[0] = factor[1] = -1;
 	for(int i = 0; i < lim; i++)	factor[i] = 0;

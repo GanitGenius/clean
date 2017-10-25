@@ -38,6 +38,7 @@ const int N = 3e5, M = N;
 const int MAX = 1e6;
 vi g[N];
 int a[N];
+
 struct wavelet_tree{
 	#define vi vector<int>
 	#define pb push_back
