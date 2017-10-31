@@ -6,7 +6,7 @@ struct Node {
 			// 
 		return node;
 	}
-}
+};
 struct SegmentTree {
 	int sarr[maxn * 4], lzy[maxn * 4];
 	
