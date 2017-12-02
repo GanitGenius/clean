@@ -1,3 +1,16 @@
+// BINARY SEARCH
+int lo = 0, hi = INF;
+while(lo < hi){
+    int mid = (lo + hi) / 2;
+    if(f(mid) > f(mid+1)){
+      lo = mid + 1;
+    }
+    else{
+      hi = mid;
+    }
+}
+
+
 {
 // Ternary Search
 double func(double x)
